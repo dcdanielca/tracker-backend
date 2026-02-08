@@ -19,7 +19,7 @@ class TestQueryRepository:
             title="Test case",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
-            created_by="test@example.com"
+            created_by="test@example.com",
         )
         await case_repo.save(case)
 
@@ -29,15 +29,15 @@ class TestQueryRepository:
             database_name="db1",
             schema_name="public",
             query_text="SELECT * FROM table1",
-            executed_by="test@example.com"
+            executed_by="test@example.com",
         )
-        
+
         query2 = CaseQuery.create(
             case_id=case.id,
             database_name="db2",
             schema_name="schema2",
             query_text="SELECT * FROM table2",
-            executed_by="test@example.com"
+            executed_by="test@example.com",
         )
 
         await query_repo.save(query1)
@@ -54,6 +54,6 @@ class TestQueryRepository:
         """Debe retornar lista vacía para caso sin queries"""
         query_repo = QueryRepositoryImpl(db_connection)
         non_existent_id = uuid4()
-        
+
         queries = await query_repo.get_by_case_id(non_existent_id)
         assert queries == []

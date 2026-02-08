@@ -13,6 +13,6 @@ class CaseStatus(Enum):
             self.OPEN: [self.IN_PROGRESS, self.CLOSED],
             self.IN_PROGRESS: [self.RESOLVED, self.CLOSED],
             self.RESOLVED: [self.CLOSED],
-            self.CLOSED: []
+            self.CLOSED: [],
         }
         return new_status in transitions.get(self, [])

@@ -11,6 +11,7 @@ from app.domain.exceptions import DomainValidationError
 @dataclass
 class CaseQuery:
     """Entidad que representa una consulta SQL ejecutada"""
+
     id: UUID = field(default_factory=uuid4)
     case_id: UUID = field(default_factory=uuid4)
     database_name: str = ""
@@ -30,7 +31,7 @@ class CaseQuery:
         query_text: str,
         executed_by: str,
         execution_time_ms: Optional[int] = None,
-        rows_affected: Optional[int] = None
+        rows_affected: Optional[int] = None,
     ) -> "CaseQuery":
         """Factory method para crear una query válida"""
         if not database_name or len(database_name.strip()) == 0:
@@ -52,13 +53,14 @@ class CaseQuery:
             query_text=query_text.strip(),
             executed_by=executed_by,
             execution_time_ms=execution_time_ms,
-            rows_affected=rows_affected
+            rows_affected=rows_affected,
         )
 
 
 @dataclass
 class SupportCase:
     """Entidad que representa un caso de soporte"""
+
     id: UUID = field(default_factory=uuid4)
     title: str = ""
     description: Optional[str] = None
@@ -77,7 +79,7 @@ class SupportCase:
         case_type: CaseType,
         priority: CasePriority,
         created_by: str,
-        description: Optional[str] = None
+        description: Optional[str] = None,
     ) -> "SupportCase":
         """Factory method para crear un caso válido"""
         if not title or len(title.strip()) == 0:
@@ -95,7 +97,7 @@ class SupportCase:
             case_type=case_type,
             priority=priority,
             created_by=created_by,
-            status=CaseStatus.OPEN
+            status=CaseStatus.OPEN,
         )
 
     def add_query(self, query: CaseQuery) -> None:

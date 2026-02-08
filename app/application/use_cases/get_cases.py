@@ -9,11 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class GetCasesUseCase:
-    def __init__(
-        self,
-        case_repository: CaseRepository,
-        query_repository: QueryRepository
-    ):
+    def __init__(self, case_repository: CaseRepository, query_repository: QueryRepository):
         self._case_repository = case_repository
         self._query_repository = query_repository
 
@@ -29,7 +25,7 @@ class GetCasesUseCase:
         sort_by: str = "created_at",
         sort_order: str = "desc",
         page: int = 1,
-        page_size: int = 10
+        page_size: int = 10,
     ) -> Tuple[List[Tuple[SupportCase, int]], int]:
         """
         Obtiene casos con filtros y paginación.
@@ -49,7 +45,7 @@ class GetCasesUseCase:
             sort_by=sort_by,
             sort_order=sort_order,
             page=page,
-            page_size=page_size
+            page_size=page_size,
         )
 
         # Para cada caso, obtener el conteo de queries
@@ -71,9 +67,9 @@ class GetCasesUseCase:
                     "priority": priority,
                     "case_type": case_type,
                     "created_by": created_by,
-                    "search": search
-                }
-            }
+                    "search": search,
+                },
+            },
         )
 
         return cases_with_count, total

@@ -41,12 +41,13 @@ class CaseResponse(BaseModel):
             created_by=case.created_by,
             created_at=case.created_at,
             updated_at=case.updated_at,
-            queries=[QueryResponse.from_entity(q) for q in case.queries]
+            queries=[QueryResponse.from_entity(q) for q in case.queries],
         )
 
 
 class CaseSummaryResponse(BaseModel):
     """Respuesta resumida para el listado de casos (sin queries completas)"""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
@@ -72,15 +73,16 @@ class CaseSummaryResponse(BaseModel):
             created_by=case.created_by,
             created_at=case.created_at,
             updated_at=case.updated_at,
-            queries_count=queries_count
+            queries_count=queries_count,
         )
 
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class PaginatedResponse(BaseModel, Generic[T]):
     """Respuesta paginada genérica"""
+
     items: List[T]
     total: int
     page: int
@@ -88,12 +90,8 @@ class PaginatedResponse(BaseModel, Generic[T]):
     pages: int
 
     @classmethod
-    def create(cls, items: List[T], total: int, page: int, page_size: int) -> "PaginatedResponse[T]":
+    def create(
+        cls, items: List[T], total: int, page: int, page_size: int
+    ) -> "PaginatedResponse[T]":
         pages = (total + page_size - 1) // page_size if page_size > 0 else 0
-        return cls(
-            items=items,
-            total=total,
-            page=page,
-            page_size=page_size,
-            pages=pages
-        )
+        return cls(items=items, total=total, page=page, page_size=page_size, pages=pages)

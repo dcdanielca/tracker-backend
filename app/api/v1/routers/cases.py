@@ -6,12 +6,12 @@ from app.api.v1.schemas.cases import (
     CreateCaseRequest,
     CaseResponse,
     CaseSummaryResponse,
-    PaginatedResponse
+    PaginatedResponse,
 )
 from app.api.dependencies import (
     get_create_case_use_case,
     get_get_cases_use_case,
-    get_get_case_by_id_use_case
+    get_get_case_by_id_use_case,
 )
 from app.application.use_cases.create_case import CreateCaseUseCase
 from app.application.use_cases.get_cases import GetCasesUseCase
@@ -29,7 +29,7 @@ router = APIRouter(prefix="/cases", tags=["cases"])
     response_model=PaginatedResponse[CaseSummaryResponse],
     status_code=status.HTTP_200_OK,
     summary="Listar casos",
-    description="Lista casos con filtros y paginación"
+    description="Lista casos con filtros y paginación",
 )
 async def get_cases(
     page: int = Query(1, ge=1, description="Número de página"),
@@ -42,8 +42,10 @@ async def get_cases(
     date_gte: Optional[datetime] = Query(None, description="Casos desde esta fecha"),
     date_lte: Optional[datetime] = Query(None, description="Casos hasta esta fecha"),
     sort_by: str = Query("created_at", description="Campo para ordenar"),
-    sort_order: str = Query("desc", pattern="^(asc|desc)$", description="Orden ascendente o descendente"),
-    use_case: GetCasesUseCase = Depends(get_get_cases_use_case)
+    sort_order: str = Query(
+        "desc", pattern="^(asc|desc)$", description="Orden ascendente o descendente"
+    ),
+    use_case: GetCasesUseCase = Depends(get_get_cases_use_case),
 ):
     """Endpoint para listar casos con filtros y paginación"""
     try:
@@ -56,9 +58,9 @@ async def get_cases(
                     "priority": priority,
                     "case_type": case_type,
                     "created_by": created_by,
-                    "search": search
-                }
-            }
+                    "search": search,
+                },
+            },
         )
 
         cases_with_count, total = await use_case.execute(
@@ -72,7 +74,7 @@ async def get_cases(
             sort_by=sort_by,
             sort_order=sort_order,
             page=page,
-            page_size=page_size
+            page_size=page_size,
         )
 
         # Convertir a response models
@@ -81,18 +83,12 @@ async def get_cases(
             for case, queries_count in cases_with_count
         ]
 
-        return PaginatedResponse.create(
-            items=items,
-            total=total,
-            page=page,
-            page_size=page_size
-        )
+        return PaginatedResponse.create(items=items, total=total, page=page, page_size=page_size)
 
     except Exception as e:
         logger.error(f"Unexpected error listing cases: {e}", exc_info=True)
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error interno del servidor"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error interno del servidor"
         )
 
 
@@ -101,11 +97,10 @@ async def get_cases(
     response_model=CaseResponse,
     status_code=status.HTTP_200_OK,
     summary="Obtener caso por ID",
-    description="Obtiene el detalle completo de un caso incluyendo todas sus consultas SQL"
+    description="Obtiene el detalle completo de un caso incluyendo todas sus consultas SQL",
 )
 async def get_case_by_id(
-    case_id: UUID,
-    use_case: GetCaseByIdUseCase = Depends(get_get_case_by_id_use_case)
+    case_id: UUID, use_case: GetCaseByIdUseCase = Depends(get_get_case_by_id_use_case)
 ):
     """Endpoint para obtener el detalle de un caso específico"""
     try:
@@ -116,8 +111,7 @@ async def get_case_by_id(
         if not case:
             logger.info(f"Case not found: {case_id}")
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Caso con ID {case_id} no encontrado"
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"Caso con ID {case_id} no encontrado"
             )
 
         logger.info(f"Case retrieved successfully: {case_id}")
@@ -128,8 +122,7 @@ async def get_case_by_id(
     except Exception as e:
         logger.error(f"Unexpected error getting case {case_id}: {e}", exc_info=True)
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error interno del servidor"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error interno del servidor"
         )
 
 
@@ -138,11 +131,10 @@ async def get_case_by_id(
     response_model=CaseResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Crear nuevo caso",
-    description="Crea un nuevo caso de soporte con sus consultas SQL asociadas"
+    description="Crea un nuevo caso de soporte con sus consultas SQL asociadas",
 )
 async def create_case(
-    request: CreateCaseRequest,
-    use_case: CreateCaseUseCase = Depends(get_create_case_use_case)
+    request: CreateCaseRequest, use_case: CreateCaseUseCase = Depends(get_create_case_use_case)
 ):
     """Endpoint para crear un nuevo caso de soporte"""
     try:
@@ -154,7 +146,7 @@ async def create_case(
             case_type=request.case_type,
             priority=request.priority,
             queries=[q.model_dump() for q in request.queries],
-            created_by=request.created_by
+            created_by=request.created_by,
         )
 
         logger.info(f"Case created successfully: {case.id}")
@@ -162,19 +154,12 @@ async def create_case(
 
     except DomainValidationError as e:
         logger.warning(f"Validation error creating case: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
     except ValueError as e:
         logger.warning(f"Value error creating case: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
     except Exception as e:
         logger.error(f"Unexpected error creating case: {e}", exc_info=True)
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error interno del servidor"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error interno del servidor"
         )

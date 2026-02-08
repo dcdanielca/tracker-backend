@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock
 from uuid import uuid4
 from datetime import datetime
 from app.application.use_cases.get_case_by_id import GetCaseByIdUseCase
@@ -28,7 +28,7 @@ class TestGetCaseByIdUseCase:
             status=CaseStatus.OPEN,
             created_by="user@test.com",
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         # Queries de ejemplo
@@ -41,7 +41,7 @@ class TestGetCaseByIdUseCase:
             execution_time_ms=100,
             rows_affected=10,
             executed_at=datetime.utcnow(),
-            executed_by="user@test.com"
+            executed_by="user@test.com",
         )
         query2 = CaseQuery(
             id=uuid4(),
@@ -52,7 +52,7 @@ class TestGetCaseByIdUseCase:
             execution_time_ms=50,
             rows_affected=1,
             executed_at=datetime.utcnow(),
-            executed_by="user@test.com"
+            executed_by="user@test.com",
         )
 
         # Configurar mocks
@@ -113,7 +113,7 @@ class TestGetCaseByIdUseCase:
             status=CaseStatus.OPEN,
             created_by="user@test.com",
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         # Configurar mocks (sin queries)

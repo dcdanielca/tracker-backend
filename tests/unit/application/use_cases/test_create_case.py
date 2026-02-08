@@ -3,7 +3,6 @@ from unittest.mock import AsyncMock
 from app.application.use_cases.create_case import CreateCaseUseCase
 from app.domain.value_objects.case_type import CaseType
 from app.domain.value_objects.case_priority import CasePriority
-from app.domain.exceptions import DomainValidationError
 
 
 @pytest.mark.asyncio
@@ -16,21 +15,24 @@ class TestCreateCaseUseCase:
         uow = AsyncMock()
         uow.__aenter__ = AsyncMock(return_value=uow)
         uow.__aexit__ = AsyncMock(return_value=None)
-        
+
         # Mock de conexión
         mock_connection = AsyncMock()
         uow.get_connection = AsyncMock(return_value=mock_connection)
-        
+
         # Mock de repositorios que se crearán internamente
         from unittest.mock import patch
-        with patch('app.application.use_cases.create_case.CaseRepositoryImpl') as MockCaseRepo, \
-             patch('app.application.use_cases.create_case.QueryRepositoryImpl') as MockQueryRepo:
-            
+
+        with patch(
+            "app.application.use_cases.create_case.CaseRepositoryImpl"
+        ) as MockCaseRepo, patch(
+            "app.application.use_cases.create_case.QueryRepositoryImpl"
+        ) as MockQueryRepo:
             mock_case_repo_instance = AsyncMock()
             mock_query_repo_instance = AsyncMock()
             MockCaseRepo.return_value = mock_case_repo_instance
             MockQueryRepo.return_value = mock_query_repo_instance
-            
+
             # Use case
             use_case = CreateCaseUseCase(case_repo, query_repo, uow)
 
@@ -44,10 +46,10 @@ class TestCreateCaseUseCase:
                     {
                         "database_name": "test_db",
                         "schema_name": "public",
-                        "query_text": "SELECT * FROM test"
+                        "query_text": "SELECT * FROM test",
                     }
                 ],
-                created_by="test@example.com"
+                created_by="test@example.com",
             )
 
             # Verificar
@@ -68,15 +70,18 @@ class TestCreateCaseUseCase:
         uow = AsyncMock()
         uow.__aenter__ = AsyncMock(return_value=uow)
         uow.__aexit__ = AsyncMock(return_value=None)
-        
+
         # Mock de conexión
         mock_connection = AsyncMock()
         uow.get_connection = AsyncMock(return_value=mock_connection)
-        
+
         from unittest.mock import patch
-        with patch('app.application.use_cases.create_case.CaseRepositoryImpl') as MockCaseRepo, \
-             patch('app.application.use_cases.create_case.QueryRepositoryImpl') as MockQueryRepo:
-            
+
+        with patch(
+            "app.application.use_cases.create_case.CaseRepositoryImpl"
+        ) as MockCaseRepo, patch(
+            "app.application.use_cases.create_case.QueryRepositoryImpl"
+        ) as MockQueryRepo:
             mock_case_repo_instance = AsyncMock()
             mock_query_repo_instance = AsyncMock()
             MockCaseRepo.return_value = mock_case_repo_instance
@@ -93,15 +98,15 @@ class TestCreateCaseUseCase:
                     {
                         "database_name": "db1",
                         "schema_name": "public",
-                        "query_text": "SELECT * FROM table1"
+                        "query_text": "SELECT * FROM table1",
                     },
                     {
                         "database_name": "db2",
                         "schema_name": "schema2",
-                        "query_text": "SELECT * FROM table2"
-                    }
+                        "query_text": "SELECT * FROM table2",
+                    },
                 ],
-                created_by="test@example.com"
+                created_by="test@example.com",
             )
 
             assert len(case.queries) == 2
@@ -127,5 +132,5 @@ class TestCreateCaseUseCase:
                 case_type="invalid_type",
                 priority="high",
                 queries=[],
-                created_by="test@example.com"
+                created_by="test@example.com",
             )

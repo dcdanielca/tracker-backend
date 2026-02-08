@@ -9,11 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class GetCaseByIdUseCase:
-    def __init__(
-        self,
-        case_repository: CaseRepository,
-        query_repository: QueryRepository
-    ):
+    def __init__(self, case_repository: CaseRepository, query_repository: QueryRepository):
         self._case_repository = case_repository
         self._query_repository = query_repository
 

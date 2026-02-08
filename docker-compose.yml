@@ -1,22 +1,61 @@
-version: '3.8'
-
 services:
+  # Base de datos PostgreSQL
   db:
-    image: postgres:16.3-alpine
-    container_name: tracker_db
+    image: postgres:16-alpine
+    container_name: tracker-db
+    restart: unless-stopped
     environment:
-      - POSTGRES_USER=tracker_user
-      - POSTGRES_PASSWORD=tracker_pass
-      - POSTGRES_DB=tracker_db
+      POSTGRES_USER: ${DB_USER:-tracker_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-tracker_pass}
+      POSTGRES_DB: ${DB_NAME:-tracker_db}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    networks:
+      - tracker-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tracker_user"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-tracker_user} -d ${DB_NAME:-tracker_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # Aplicación FastAPI
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tracker-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-tracker_user}
+      DB_PASSWORD: ${DB_PASSWORD:-tracker_pass}
+      DB_NAME: ${DB_NAME:-tracker_db}
+      APP_NAME: ${APP_NAME:-Tracker API}
+      DEBUG: ${DEBUG:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-["http://localhost:3000"]}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tracker-network
+    volumes:
+      # Montaje para desarrollo (comentar en producción)
+      - ./app:/app/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
 volumes:
   postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  tracker-network:
+    driver: bridge

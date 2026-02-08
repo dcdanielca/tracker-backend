@@ -20,11 +20,11 @@ class TestCaseAPI:
                         {
                             "database_name": "test_db",
                             "schema_name": "public",
-                            "query_text": "SELECT * FROM test"
+                            "query_text": "SELECT * FROM test",
                         }
                     ],
-                    "created_by": "test@example.com"
-                }
+                    "created_by": "test@example.com",
+                },
             )
 
             assert response.status_code == 201
@@ -47,8 +47,8 @@ class TestCaseAPI:
                     "case_type": "requirement",
                     "priority": "medium",
                     "queries": [],
-                    "created_by": "user@example.com"
-                }
+                    "created_by": "user@example.com",
+                },
             )
 
             assert response.status_code == 201
@@ -65,8 +65,8 @@ class TestCaseAPI:
                     "title": "",  # Título vacío
                     "case_type": "support",
                     "priority": "high",
-                    "created_by": "test@example.com"
-                }
+                    "created_by": "test@example.com",
+                },
             )
 
             assert response.status_code == 422
@@ -80,8 +80,8 @@ class TestCaseAPI:
                     "title": "Test case",
                     "case_type": "support",
                     "priority": "high",
-                    "created_by": "invalid-email"  # Email inválido
-                }
+                    "created_by": "invalid-email",  # Email inválido
+                },
             )
 
             assert response.status_code == 422
@@ -98,8 +98,8 @@ class TestCaseAPI:
                         "case_type": "support",
                         "priority": "medium",
                         "created_by": "test@example.com",
-                        "queries": []
-                    }
+                        "queries": [],
+                    },
                 )
 
             # Obtener lista
@@ -126,8 +126,8 @@ class TestCaseAPI:
                     "case_type": "support",
                     "priority": "high",
                     "created_by": "user1@example.com",
-                    "queries": []
-                }
+                    "queries": [],
+                },
             )
             await client.post(
                 "/api/v1/cases/",
@@ -136,8 +136,8 @@ class TestCaseAPI:
                     "case_type": "requirement",
                     "priority": "low",
                     "created_by": "user2@example.com",
-                    "queries": []
-                }
+                    "queries": [],
+                },
             )
 
             # Filtrar por prioridad alta
@@ -163,8 +163,8 @@ class TestCaseAPI:
                     "case_type": "support",
                     "priority": "critical",
                     "created_by": "test@example.com",
-                    "queries": []
-                }
+                    "queries": [],
+                },
             )
 
             # Buscar por "database"
@@ -188,8 +188,8 @@ class TestCaseAPI:
                         "case_type": "support",
                         "priority": "medium",
                         "created_by": "test@example.com",
-                        "queries": []
-                    }
+                        "queries": [],
+                    },
                 )
 
             # Página 1 con 10 elementos
@@ -219,18 +219,10 @@ class TestCaseAPI:
                     "priority": "medium",
                     "created_by": "test@example.com",
                     "queries": [
-                        {
-                            "database_name": "db1",
-                            "schema_name": "public",
-                            "query_text": "SELECT 1"
-                        },
-                        {
-                            "database_name": "db2",
-                            "schema_name": "public",
-                            "query_text": "SELECT 2"
-                        }
-                    ]
-                }
+                        {"database_name": "db1", "schema_name": "public", "query_text": "SELECT 1"},
+                        {"database_name": "db2", "schema_name": "public", "query_text": "SELECT 2"},
+                    ],
+                },
             )
 
             # Obtener lista
@@ -240,8 +232,7 @@ class TestCaseAPI:
             data = response.json()
             # Buscar el caso creado
             case = next(
-                (item for item in data["items"] if "Case with queries" in item["title"]),
-                None
+                (item for item in data["items"] if "Case with queries" in item["title"]), None
             )
             assert case is not None
             assert "queries_count" in case
@@ -263,10 +254,10 @@ class TestCaseAPI:
                         {
                             "database_name": "test_db",
                             "schema_name": "public",
-                            "query_text": "SELECT * FROM users"
+                            "query_text": "SELECT * FROM users",
                         }
-                    ]
-                }
+                    ],
+                },
             )
 
             assert create_response.status_code == 201

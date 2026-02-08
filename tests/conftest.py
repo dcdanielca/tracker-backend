@@ -1,8 +1,6 @@
 import pytest
 import asyncio
-from app.infrastructure.database.connection import DatabaseConnection
 from app.infrastructure.database.db import db
-from app.config import settings
 
 
 @pytest.fixture(scope="session")

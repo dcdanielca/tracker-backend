@@ -17,10 +17,10 @@ class PostgreSQLUnitOfWork(UnitOfWork):
 
     async def __aenter__(self) -> "PostgreSQLUnitOfWork":
         """Inicia una transacción"""
-        pool = getattr(self._db, '_pool', None)
+        pool = getattr(self._db, "_pool", None)
         if not pool:
             raise RuntimeError("Database pool not initialized")
-        
+
         self._connection = await pool.acquire()
         self._transaction = self._connection.transaction()
         await self._transaction.start()
@@ -40,7 +40,7 @@ class PostgreSQLUnitOfWork(UnitOfWork):
                 logger.debug("Transaction committed")
         finally:
             if self._connection:
-                pool = getattr(self._db, '_pool', None)
+                pool = getattr(self._db, "_pool", None)
                 if pool:
                     await pool.release(self._connection)
                 self._connection = None

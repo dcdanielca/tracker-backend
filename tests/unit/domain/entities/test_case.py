@@ -14,7 +14,7 @@ class TestSupportCase:
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
             created_by="test@example.com",
-            description="Description"
+            description="Description",
         )
 
         assert case.title == "Test case"
@@ -31,7 +31,7 @@ class TestSupportCase:
                 title="",
                 case_type=CaseType.SUPPORT,
                 priority=CasePriority.MEDIUM,
-                created_by="test@example.com"
+                created_by="test@example.com",
             )
 
     def test_create_case_with_invalid_email_raises_error(self):
@@ -41,7 +41,7 @@ class TestSupportCase:
                 title="Test",
                 case_type=CaseType.SUPPORT,
                 priority=CasePriority.MEDIUM,
-                created_by="invalid-email"
+                created_by="invalid-email",
             )
 
     def test_create_case_with_title_too_long_raises_error(self):
@@ -52,7 +52,7 @@ class TestSupportCase:
                 title=long_title,
                 case_type=CaseType.SUPPORT,
                 priority=CasePriority.MEDIUM,
-                created_by="test@example.com"
+                created_by="test@example.com",
             )
 
     def test_add_query_to_case(self):
@@ -61,17 +61,17 @@ class TestSupportCase:
             title="Test",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.MEDIUM,
-            created_by="test@example.com"
+            created_by="test@example.com",
         )
-        
+
         query = CaseQuery.create(
             case_id=case.id,
             database_name="test_db",
             schema_name="public",
             query_text="SELECT * FROM test",
-            executed_by="test@example.com"
+            executed_by="test@example.com",
         )
-        
+
         case.add_query(query)
         assert len(case.queries) == 1
         assert case.queries[0].id == query.id
@@ -82,18 +82,19 @@ class TestSupportCase:
             title="Test",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.MEDIUM,
-            created_by="test@example.com"
+            created_by="test@example.com",
         )
-        
+
         from uuid import uuid4
+
         query = CaseQuery.create(
             case_id=uuid4(),  # Diferente al case.id
             database_name="test_db",
             schema_name="public",
             query_text="SELECT * FROM test",
-            executed_by="test@example.com"
+            executed_by="test@example.com",
         )
-        
+
         with pytest.raises(DomainValidationError, match="La query no pertenece a este caso"):
             case.add_query(query)
 
@@ -102,16 +103,17 @@ class TestCaseQuery:
     def test_create_query_with_valid_data(self):
         """Debe crear una query válida"""
         from uuid import uuid4
+
         case_id = uuid4()
-        
+
         query = CaseQuery.create(
             case_id=case_id,
             database_name="test_db",
             schema_name="public",
             query_text="SELECT * FROM test",
-            executed_by="test@example.com"
+            executed_by="test@example.com",
         )
-        
+
         assert query.database_name == "test_db"
         assert query.schema_name == "public"
         assert query.query_text == "SELECT * FROM test"
@@ -121,23 +123,27 @@ class TestCaseQuery:
     def test_create_query_with_empty_database_name_raises_error(self):
         """No debe permitir database_name vacío"""
         from uuid import uuid4
-        with pytest.raises(DomainValidationError, match="nombre de la base de datos no puede estar vacío"):
+
+        with pytest.raises(
+            DomainValidationError, match="nombre de la base de datos no puede estar vacío"
+        ):
             CaseQuery.create(
                 case_id=uuid4(),
                 database_name="",
                 schema_name="public",
                 query_text="SELECT * FROM test",
-                executed_by="test@example.com"
+                executed_by="test@example.com",
             )
 
     def test_create_query_with_invalid_email_raises_error(self):
         """No debe permitir email inválido"""
         from uuid import uuid4
+
         with pytest.raises(DomainValidationError, match="email del ejecutor no es válido"):
             CaseQuery.create(
                 case_id=uuid4(),
                 database_name="test_db",
                 schema_name="public",
                 query_text="SELECT * FROM test",
-                executed_by="invalid-email"
+                executed_by="invalid-email",
             )

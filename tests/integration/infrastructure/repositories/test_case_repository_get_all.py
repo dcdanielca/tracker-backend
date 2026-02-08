@@ -1,5 +1,4 @@
 import pytest
-from uuid import uuid4
 from datetime import datetime, timedelta
 from app.domain.entities.case import SupportCase
 from app.domain.value_objects.case_type import CaseType
@@ -20,21 +19,21 @@ class TestCaseRepositoryGetAll:
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
             created_by="user1@test.com",
-            description="Description 1"
+            description="Description 1",
         )
         case2 = SupportCase.create(
             title="Case 2",
             case_type=CaseType.REQUIREMENT,
             priority=CasePriority.MEDIUM,
             created_by="user2@test.com",
-            description="Description 2"
+            description="Description 2",
         )
         case3 = SupportCase.create(
             title="Case 3",
             case_type=CaseType.INVESTIGATION,
             priority=CasePriority.LOW,
             created_by="user3@test.com",
-            description="Description 3"
+            description="Description 3",
         )
 
         await repo.save(case1)
@@ -57,7 +56,7 @@ class TestCaseRepositoryGetAll:
             title="Case 1",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
         case1.status = CaseStatus.OPEN
 
@@ -65,7 +64,7 @@ class TestCaseRepositoryGetAll:
             title="Case 2",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
         case2.status = CaseStatus.IN_PROGRESS
 
@@ -89,13 +88,13 @@ class TestCaseRepositoryGetAll:
             title="High Priority",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
         case2 = SupportCase.create(
             title="Low Priority",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.LOW,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
 
         await repo.save(case1)
@@ -118,13 +117,13 @@ class TestCaseRepositoryGetAll:
             title="Support Case",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.MEDIUM,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
         case2 = SupportCase.create(
             title="Requirement Case",
             case_type=CaseType.REQUIREMENT,
             priority=CasePriority.MEDIUM,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
 
         await repo.save(case1)
@@ -147,13 +146,13 @@ class TestCaseRepositoryGetAll:
             title="Case 1",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.MEDIUM,
-            created_by="user1@test.com"
+            created_by="user1@test.com",
         )
         case2 = SupportCase.create(
             title="Case 2",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.MEDIUM,
-            created_by="user2@test.com"
+            created_by="user2@test.com",
         )
 
         await repo.save(case1)
@@ -177,14 +176,14 @@ class TestCaseRepositoryGetAll:
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
             created_by="user@test.com",
-            description="Problem with SQL query"
+            description="Problem with SQL query",
         )
         case2 = SupportCase.create(
             title="API Enhancement",
             case_type=CaseType.REQUIREMENT,
             priority=CasePriority.MEDIUM,
             created_by="user@test.com",
-            description="Add new endpoint"
+            description="Add new endpoint",
         )
 
         await repo.save(case1)
@@ -205,13 +204,12 @@ class TestCaseRepositoryGetAll:
         # Crear casos con fechas diferentes
         now = datetime.utcnow()
         yesterday = now - timedelta(days=1)
-        tomorrow = now + timedelta(days=1)
 
         case1 = SupportCase.create(
             title="Old Case",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.MEDIUM,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
         case1.created_at = yesterday
 
@@ -219,18 +217,14 @@ class TestCaseRepositoryGetAll:
             title="New Case",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.MEDIUM,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
 
         await repo.save(case1)
         await repo.save(case2)
 
         # Filtrar casos desde hoy
-        cases, total = await repo.get_all(
-            date_gte=now - timedelta(hours=1),
-            page=1,
-            page_size=10
-        )
+        cases, total = await repo.get_all(date_gte=now - timedelta(hours=1), page=1, page_size=10)
 
         # Verificar - solo debe encontrar case2
         assert len(cases) == 1
@@ -246,7 +240,7 @@ class TestCaseRepositoryGetAll:
                 title=f"Case {i+1}",
                 case_type=CaseType.SUPPORT,
                 priority=CasePriority.MEDIUM,
-                created_by="user@test.com"
+                created_by="user@test.com",
             )
             await repo.save(case)
 
@@ -269,35 +263,25 @@ class TestCaseRepositoryGetAll:
             title="AAA Case",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.LOW,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
         case2 = SupportCase.create(
             title="ZZZ Case",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
-            created_by="user@test.com"
+            created_by="user@test.com",
         )
 
         await repo.save(case1)
         await repo.save(case2)
 
         # Ordenar por título ascendente
-        cases_asc, _ = await repo.get_all(
-            sort_by="title",
-            sort_order="asc",
-            page=1,
-            page_size=10
-        )
+        cases_asc, _ = await repo.get_all(sort_by="title", sort_order="asc", page=1, page_size=10)
         assert cases_asc[0].title == "AAA Case"
         assert cases_asc[1].title == "ZZZ Case"
 
         # Ordenar por título descendente
-        cases_desc, _ = await repo.get_all(
-            sort_by="title",
-            sort_order="desc",
-            page=1,
-            page_size=10
-        )
+        cases_desc, _ = await repo.get_all(sort_by="title", sort_order="desc", page=1, page_size=10)
         assert cases_desc[0].title == "ZZZ Case"
         assert cases_desc[1].title == "AAA Case"
 
@@ -310,19 +294,19 @@ class TestCaseRepositoryGetAll:
             title="High Priority Support",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
-            created_by="user1@test.com"
+            created_by="user1@test.com",
         )
         case2 = SupportCase.create(
             title="Low Priority Support",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.LOW,
-            created_by="user1@test.com"
+            created_by="user1@test.com",
         )
         case3 = SupportCase.create(
             title="High Priority Requirement",
             case_type=CaseType.REQUIREMENT,
             priority=CasePriority.HIGH,
-            created_by="user2@test.com"
+            created_by="user2@test.com",
         )
 
         await repo.save(case1)
@@ -331,11 +315,7 @@ class TestCaseRepositoryGetAll:
 
         # Filtrar: tipo=support, prioridad=high, creador=user1
         cases, total = await repo.get_all(
-            case_type="support",
-            priority="high",
-            created_by="user1@test.com",
-            page=1,
-            page_size=10
+            case_type="support", priority="high", created_by="user1@test.com", page=1, page_size=10
         )
 
         # Verificar - solo debe encontrar case1

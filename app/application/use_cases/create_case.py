@@ -14,10 +14,7 @@ logger = logging.getLogger(__name__)
 
 class CreateCaseUseCase:
     def __init__(
-        self,
-        case_repository: CaseRepository,
-        query_repository: QueryRepository,
-        uow: UnitOfWork
+        self, case_repository: CaseRepository, query_repository: QueryRepository, uow: UnitOfWork
     ):
         self._case_repository = case_repository
         self._query_repository = query_repository
@@ -30,24 +27,24 @@ class CreateCaseUseCase:
         case_type: str,
         priority: str,
         queries: List[dict],
-        created_by: str
+        created_by: str,
     ) -> SupportCase:
         """Crea un nuevo caso con sus queries asociadas"""
         async with self._uow:
             # Obtener conexión de la transacción
             connection = self._uow.get_connection()
-            
+
             # Crear repositorios con la conexión de transacción
             case_repo = CaseRepositoryImpl(self._case_repository._db, connection)
             query_repo = QueryRepositoryImpl(self._query_repository._db, connection)
-            
+
             # Crear entidad de dominio
             case = SupportCase.create(
                 title=title,
                 description=description,
                 case_type=CaseType(case_type),
                 priority=CasePriority(priority),
-                created_by=created_by
+                created_by=created_by,
             )
 
             # Persistir caso
@@ -62,7 +59,7 @@ class CreateCaseUseCase:
                     database_name=query_data["database_name"],
                     schema_name=query_data["schema_name"],
                     query_text=query_data["query_text"],
-                    executed_by=created_by
+                    executed_by=created_by,
                 )
                 case_queries.append(query)
                 case.add_query(query)

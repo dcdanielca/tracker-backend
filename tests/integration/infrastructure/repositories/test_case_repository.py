@@ -17,7 +17,7 @@ class TestCaseRepository:
             title="Test case",
             case_type=CaseType.SUPPORT,
             priority=CasePriority.HIGH,
-            created_by="test@example.com"
+            created_by="test@example.com",
         )
 
         # Guardar
@@ -38,6 +38,6 @@ class TestCaseRepository:
         """Debe retornar None para caso inexistente"""
         repo = CaseRepositoryImpl(db_connection)
         non_existent_id = uuid4()
-        
+
         result = await repo.get_by_id(non_existent_id)
         assert result is None

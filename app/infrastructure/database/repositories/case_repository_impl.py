@@ -40,7 +40,7 @@ class CaseRepositoryImpl(CaseRepository):
                 case.status.value,
                 case.created_by,
                 case.created_at,
-                case.updated_at
+                case.updated_at,
             )
         else:
             # Usar pool normal
@@ -54,7 +54,7 @@ class CaseRepositoryImpl(CaseRepository):
                 case.status.value,
                 case.created_by,
                 case.created_at,
-                case.updated_at
+                case.updated_at,
             )
         logger.debug(f"Case saved: {case.id}")
 
@@ -90,7 +90,7 @@ class CaseRepositoryImpl(CaseRepository):
         sort_by: str = "created_at",
         sort_order: str = "desc",
         page: int = 1,
-        page_size: int = 10
+        page_size: int = 10,
     ) -> Tuple[List[SupportCase], int]:
         """Obtiene casos con filtros y paginación"""
         offset = (page - 1) * page_size
@@ -138,7 +138,14 @@ class CaseRepositoryImpl(CaseRepository):
         where_clause = " AND ".join(conditions) if conditions else "1=1"
 
         # Validar sort_by para prevenir SQL injection
-        allowed_sort_fields = ["status", "priority", "case_type", "created_by", "created_at", "title"]
+        allowed_sort_fields = [
+            "status",
+            "priority",
+            "case_type",
+            "created_by",
+            "created_at",
+            "title",
+        ]
         if sort_by not in allowed_sort_fields:
             sort_by = "created_at"
 
@@ -191,5 +198,5 @@ class CaseRepositoryImpl(CaseRepository):
             status=CaseStatus(row["status"]),
             created_by=row["created_by"],
             created_at=row["created_at"],
-            updated_at=row["updated_at"]
+            updated_at=row["updated_at"],
         )

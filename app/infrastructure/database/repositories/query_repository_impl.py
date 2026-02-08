@@ -36,7 +36,7 @@ class QueryRepositoryImpl(QueryRepository):
                 query.execution_time_ms,
                 query.rows_affected,
                 query.executed_at,
-                query.executed_by
+                query.executed_by,
             )
         else:
             # Usar pool normal
@@ -50,7 +50,7 @@ class QueryRepositoryImpl(QueryRepository):
                 query.execution_time_ms,
                 query.rows_affected,
                 query.executed_at,
-                query.executed_by
+                query.executed_by,
             )
         logger.debug(f"Query saved: {query.id}")
 
@@ -78,7 +78,7 @@ class QueryRepositoryImpl(QueryRepository):
                 q.execution_time_ms,
                 q.rows_affected,
                 q.executed_at,
-                q.executed_by
+                q.executed_by,
             )
             for q in queries
         ]
@@ -89,7 +89,7 @@ class QueryRepositoryImpl(QueryRepository):
         else:
             # Usar pool normal
             await self._db.executemany(sql, values)
-        
+
         logger.debug(f"Saved {len(queries)} queries in batch")
 
     async def get_by_case_id(self, case_id: UUID) -> List[CaseQuery]:
@@ -107,7 +107,7 @@ class QueryRepositoryImpl(QueryRepository):
             rows = await self._connection.fetch(query, case_id)
         else:
             rows = await self._db.fetch(query, case_id)
-        
+
         return [self._map_to_entity(row) for row in rows]
 
     def _map_to_entity(self, row: asyncpg.Record) -> CaseQuery:
@@ -121,5 +121,5 @@ class QueryRepositoryImpl(QueryRepository):
             execution_time_ms=row["execution_time_ms"],
             rows_affected=row["rows_affected"],
             executed_at=row["executed_at"],
-            executed_by=row["executed_by"]
+            executed_by=row["executed_by"],
         )

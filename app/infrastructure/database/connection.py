@@ -25,7 +25,7 @@ class DatabaseConnection:
                 max_size=10,  # Reduced for development
                 command_timeout=60,
                 max_queries=50000,
-                max_inactive_connection_lifetime=300
+                max_inactive_connection_lifetime=300,
             )
             logger.info(
                 f"Database connection pool created successfully "
@@ -34,7 +34,7 @@ class DatabaseConnection:
         except asyncpg.exceptions.InvalidPasswordError as e:
             logger.error(f"Invalid database credentials: {e}")
             raise
-        except ConnectionRefusedError as e:
+        except ConnectionRefusedError:
             logger.error(
                 f"Connection refused to {settings.DB_HOST}:{settings.DB_PORT}\n"
                 f"Please ensure PostgreSQL is running.\n"

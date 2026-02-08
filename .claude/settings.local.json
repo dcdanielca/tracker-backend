@@ -4,7 +4,11 @@
       "Bash(python -m pip install:*)",
       "Bash(python3 -m pip install:*)",
       "Bash(chmod:*)",
-      "Bash(docker-compose ps:*)"
+      "Bash(docker-compose ps:*)",
+      "Bash(groups:*)",
+      "Bash(systemctl:*)",
+      "Bash(sudo systemctl status:*)",
+      "Bash(sudo docker compose ps:*)"
     ]
   }
 }

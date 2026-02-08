@@ -27,7 +27,7 @@ class TestGetCasesUseCase:
             status=CaseStatus.OPEN,
             created_by="user1@test.com",
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
         case2 = SupportCase(
             id=uuid4(),
@@ -38,7 +38,7 @@ class TestGetCasesUseCase:
             status=CaseStatus.IN_PROGRESS,
             created_by="user2@test.com",
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         # Configurar mocks
@@ -49,10 +49,7 @@ class TestGetCasesUseCase:
         use_case = GetCasesUseCase(case_repo, query_repo)
 
         # Ejecutar
-        cases_with_count, total = await use_case.execute(
-            page=1,
-            page_size=10
-        )
+        cases_with_count, total = await use_case.execute(page=1, page_size=10)
 
         # Verificar
         assert len(cases_with_count) == 2
@@ -80,7 +77,7 @@ class TestGetCasesUseCase:
             status=CaseStatus.OPEN,
             created_by="user1@test.com",
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         # Configurar mocks
@@ -98,7 +95,7 @@ class TestGetCasesUseCase:
             created_by="user1@test.com",
             search="Case",
             page=1,
-            page_size=10
+            page_size=10,
         )
 
         # Verificar
@@ -116,7 +113,7 @@ class TestGetCasesUseCase:
             sort_by="created_at",
             sort_order="desc",
             page=1,
-            page_size=10
+            page_size=10,
         )
 
     async def test_get_cases_with_queries_count(self):
@@ -135,7 +132,7 @@ class TestGetCasesUseCase:
             status=CaseStatus.OPEN,
             created_by="user1@test.com",
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         # Configurar mocks
@@ -169,7 +166,7 @@ class TestGetCasesUseCase:
             status=CaseStatus.OPEN,
             created_by="user1@test.com",
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
 
         # Configurar mocks
@@ -180,10 +177,7 @@ class TestGetCasesUseCase:
         use_case = GetCasesUseCase(case_repo, query_repo)
 
         # Ejecutar página 2 con 10 elementos por página
-        cases_with_count, total = await use_case.execute(
-            page=2,
-            page_size=10
-        )
+        cases_with_count, total = await use_case.execute(page=2, page_size=10)
 
         # Verificar
         assert len(cases_with_count) == 1
@@ -199,7 +193,7 @@ class TestGetCasesUseCase:
             sort_by="created_at",
             sort_order="desc",
             page=2,
-            page_size=10
+            page_size=10,
         )
 
     async def test_get_cases_empty_result(self):

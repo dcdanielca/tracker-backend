@@ -10,7 +10,7 @@ from app.api.v1.routers import cases as cases_router
 logging.basicConfig(
     level=getattr(logging, settings.LOG_LEVEL),
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    stream=sys.stdout
+    stream=sys.stdout,
 )
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ app = FastAPI(
     title=settings.APP_NAME,
     description="Sistema de tracker de casos de soporte y requerimientos",
     version="1.0.0",
-    debug=settings.DEBUG
+    debug=settings.DEBUG,
 )
 
 # CORS middleware
@@ -66,7 +66,7 @@ async def root():
     return {
         "message": "Hello World from Tracker API!",
         "app": settings.APP_NAME,
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
 
 
@@ -81,28 +81,13 @@ async def readiness():
     """Readiness check - verifies database connection"""
     try:
         await db.execute("SELECT 1")
-        return {
-            "status": "ready",
-            "checks": {
-                "database": "healthy"
-            }
-        }
+        return {"status": "ready", "checks": {"database": "healthy"}}
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
-        return {
-            "status": "not_ready",
-            "checks": {
-                "database": "unhealthy",
-                "error": str(e)
-            }
-        }
+        return {"status": "not_ready", "checks": {"database": "unhealthy", "error": str(e)}}
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        "app.main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=settings.DEBUG
-    )
+
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)

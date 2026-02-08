@@ -45,7 +45,37 @@ htmlcov/
 
 # Logs
 *.log
+logs/
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Docker
+.dockerignore.swp
+
+# Backups
+backups/
+*.sql
+*.sql.gz
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# Pre-commit
+.pre-commit-config.yaml
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp

@@ -62,3 +62,12 @@ Se deben crear las siguientes vistas usando React y TypeScript:
 # Implementación con claude.md luego de ajustes manuales realizados
 
 Lee mi archivo @claude.md. Luego genera genera el esqueleto del proyecto con los modelos y migraciones y instala dependencias para crear el primer hola mundo de fast api  
+
+
+# Endpoint creacion de casos
+
+crear primer endpoint para crear casos @claude.md  con tests, usa un bulk create para guardar todas las queries del request
+
+# Ajustes en tests
+
+Para los tests usa una BD diferente (modifica @tests/conftest.py para crear base de datos y hacer migraciones correspondientes) 

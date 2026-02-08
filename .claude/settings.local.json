@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python -m pip install:*)",
       "Bash(python3 -m pip install:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(docker-compose ps:*)"
     ]
   }
 }

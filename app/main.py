@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 import sys
 from app.config import settings
-from app.infrastructure.database.connection import DatabaseConnection
+from app.infrastructure.database.db import db
+from app.api.v1.routers import cases as cases_router
 
 # Setup logging
 logging.basicConfig(
@@ -30,8 +31,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Database connection instance
-db = DatabaseConnection()
+# Include routers
+app.include_router(cases_router.router, prefix="/api/v1")
 
 
 @app.on_event("startup")

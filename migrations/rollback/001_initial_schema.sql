@@ -1,0 +1,6 @@
+BEGIN;
+
+DROP TABLE IF EXISTS case_queries CASCADE;
+DROP TABLE IF EXISTS support_cases CASCADE;
+
+COMMIT;

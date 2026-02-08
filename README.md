@@ -45,8 +45,6 @@ make run
 - [Comandos Make](#-comandos-make)
 - [API Endpoints](#-api-endpoints)
 - [Testing](#-testing)
-- [Docker](#-docker)
-- [Contribuir](#-contribuir)
 
 ## ✨ Características
 
@@ -237,33 +235,6 @@ poetry run pytest tests/e2e/
 make test-cov
 # Abre htmlcov/index.html en el navegador
 ```
-
-## 🐳 Docker
-
-### Desarrollo
-
-```bash
-# Levantar todo
-docker-compose up -d
-
-# Ver logs
-docker-compose logs -f
-
-# Acceder al shell
-docker-compose exec app /bin/bash
-```
-
-### Producción
-
-```bash
-# Usar el archivo de producción
-docker-compose -f docker-compose.prod.yml up -d
-
-# Con Nginx como reverse proxy
-docker-compose -f docker-compose.prod.yml --profile nginx up -d
-```
-
-Ver [DOCKER.md](./DOCKER.md) para más detalles.
 
 ## 🔐 Variables de Entorno
 

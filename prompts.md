@@ -68,6 +68,12 @@ Lee mi archivo @claude.md. Luego genera genera el esqueleto del proyecto con los
 
 crear primer endpoint para crear casos @claude.md  con tests, usa un bulk create para guardar todas las queries del request
 
-# Ajustes en tests
 
-Para los tests usa una BD diferente (modifica @tests/conftest.py para crear base de datos y hacer migraciones correspondientes) 
+# Endpoints GET
+
+Ahora crea endpoint para listar casos y obtener detalle @claude.md con tests  
+
+
+# Dockerizacion
+
+Genera toda la configuracion necesaria para levantar poryecto, usando Docker, docker-compose y Makefile 

@@ -1,5 +1,6 @@
 from uuid import UUID
-from typing import Optional
+from typing import Optional, List, Tuple
+from datetime import datetime
 import asyncpg
 from app.domain.entities.case import SupportCase
 from app.domain.repositories.case_repository import CaseRepository
@@ -76,6 +77,108 @@ class CaseRepositoryImpl(CaseRepository):
             return None
 
         return self._map_to_entity(row)
+
+    async def get_all(
+        self,
+        status: Optional[str] = None,
+        priority: Optional[str] = None,
+        case_type: Optional[str] = None,
+        created_by: Optional[str] = None,
+        search: Optional[str] = None,
+        date_gte: Optional[datetime] = None,
+        date_lte: Optional[datetime] = None,
+        sort_by: str = "created_at",
+        sort_order: str = "desc",
+        page: int = 1,
+        page_size: int = 10
+    ) -> Tuple[List[SupportCase], int]:
+        """Obtiene casos con filtros y paginación"""
+        offset = (page - 1) * page_size
+        conditions = []
+        params = []
+        param_idx = 1
+
+        # Construir condiciones dinámicamente
+        if status:
+            conditions.append(f"status = ${param_idx}")
+            params.append(status)
+            param_idx += 1
+
+        if priority:
+            conditions.append(f"priority = ${param_idx}")
+            params.append(priority)
+            param_idx += 1
+
+        if case_type:
+            conditions.append(f"case_type = ${param_idx}")
+            params.append(case_type)
+            param_idx += 1
+
+        if created_by:
+            conditions.append(f"created_by = ${param_idx}")
+            params.append(created_by)
+            param_idx += 1
+
+        if search:
+            conditions.append(f"(title ILIKE ${param_idx} OR description ILIKE ${param_idx})")
+            search_term = f"%{search}%"
+            params.append(search_term)
+            param_idx += 1
+
+        if date_gte:
+            conditions.append(f"created_at >= ${param_idx}")
+            params.append(date_gte)
+            param_idx += 1
+
+        if date_lte:
+            conditions.append(f"created_at <= ${param_idx}")
+            params.append(date_lte)
+            param_idx += 1
+
+        where_clause = " AND ".join(conditions) if conditions else "1=1"
+
+        # Validar sort_by para prevenir SQL injection
+        allowed_sort_fields = ["status", "priority", "case_type", "created_by", "created_at", "title"]
+        if sort_by not in allowed_sort_fields:
+            sort_by = "created_at"
+
+        # Validar sort_order
+        sort_order_sql = "DESC" if sort_order.lower() == "desc" else "ASC"
+
+        # Query para datos
+        query = f"""
+            SELECT
+                id, title, description, case_type, priority,
+                status, created_by, created_at, updated_at
+            FROM support_cases
+            WHERE {where_clause}
+            ORDER BY {sort_by} {sort_order_sql}
+            LIMIT ${param_idx} OFFSET ${param_idx + 1}
+        """
+        params.extend([page_size, offset])
+
+        # Ejecutar query
+        if self._connection:
+            rows = await self._connection.fetch(query, *params)
+        else:
+            rows = await self._db.fetch(query, *params)
+
+        # Query para total (sin LIMIT y OFFSET)
+        count_query = f"""
+            SELECT COUNT(*) FROM support_cases
+            WHERE {where_clause}
+        """
+        count_params = params[:-2]  # Excluir LIMIT y OFFSET
+
+        if self._connection:
+            total = await self._connection.fetchval(count_query, *count_params)
+        else:
+            total = await self._db.fetchval(count_query, *count_params)
+
+        cases = [self._map_to_entity(row) for row in rows]
+        logger.debug(f"Retrieved {len(cases)} cases (total: {total})")
+
+        return cases, total
 
     def _map_to_entity(self, row: asyncpg.Record) -> SupportCase:
         """Mapea un registro de DB a una entidad de dominio"""

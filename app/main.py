@@ -38,8 +38,17 @@ db = DatabaseConnection()
 async def startup():
     """Initialize database connection on startup"""
     logger.info("Starting application...")
-    await db.connect()
-    logger.info("Database connected successfully")
+    try:
+        await db.connect()
+        logger.info("Database connected successfully")
+    except Exception as e:
+        logger.error(
+            f"Failed to connect to database: {e}\n"
+            "Please ensure PostgreSQL is running.\n"
+            "You can start it with: make db-up or docker-compose up -d db"
+        )
+        # No raise - allow app to start but health checks will fail
+        logger.warning("Application started without database connection")
 
 
 @app.on_event("shutdown")

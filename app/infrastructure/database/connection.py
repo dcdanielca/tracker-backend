@@ -21,13 +21,26 @@ class DatabaseConnection:
                 user=settings.DB_USER,
                 password=settings.DB_PASSWORD,
                 database=settings.DB_NAME,
-                min_size=10,
-                max_size=20,
+                min_size=2,  # Reduced for development
+                max_size=10,  # Reduced for development
                 command_timeout=60,
                 max_queries=50000,
                 max_inactive_connection_lifetime=300
             )
-            logger.info("Database connection pool created successfully")
+            logger.info(
+                f"Database connection pool created successfully "
+                f"(host={settings.DB_HOST}, port={settings.DB_PORT}, db={settings.DB_NAME})"
+            )
+        except asyncpg.exceptions.InvalidPasswordError as e:
+            logger.error(f"Invalid database credentials: {e}")
+            raise
+        except ConnectionRefusedError as e:
+            logger.error(
+                f"Connection refused to {settings.DB_HOST}:{settings.DB_PORT}\n"
+                f"Please ensure PostgreSQL is running.\n"
+                f"Start with: make db-up or docker-compose up -d db"
+            )
+            raise
         except Exception as e:
             logger.error(f"Failed to create database connection pool: {e}")
             raise

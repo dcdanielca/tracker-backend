@@ -8,7 +8,11 @@
       "Bash(groups:*)",
       "Bash(systemctl:*)",
       "Bash(sudo systemctl status:*)",
-      "Bash(sudo docker compose ps:*)"
+      "Bash(sudo docker compose ps:*)",
+      "Bash(docker compose build:*)",
+      "Bash(docker compose:*)",
+      "Bash(make test:*)",
+      "Bash(make test-cov:*)"
     ]
   }
 }

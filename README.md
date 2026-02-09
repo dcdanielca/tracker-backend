@@ -7,12 +7,14 @@ Sistema de tracker de casos de soporte y requerimientos construido con FastAPI y
 ### Opción 1: Con Docker (Recomendado)
 - Docker 20+
 - Docker Compose 2+
-- Make (opcional, pero recomendado)
+- Make 
 
 ### Opción 2: Sin Docker
-- Poetry 1.8.2
-- Python 3.12
-- Postgres 16.11 (Crear base de datos y usuario correspondiente con permisos)
+
+- Python 3.12+
+- Poetry 1.8.2 (gestor de dependencias)
+- Docker y Docker Compose
+- PostgreSQL 16 (si no usas Docker)
 
 ## 🚀 Quick Start
 
@@ -22,7 +24,7 @@ Sistema de tracker de casos de soporte y requerimientos construido con FastAPI y
 # 1. Clonar el repositorio y configurar variables de entorno
 cp .env.example .env
 
-# 2. Levantar todos los servicios
+# 2. Levantar todos los servicios DB y API
 make docker-build
 make docker-up
 
@@ -41,9 +43,11 @@ make migrate
 # 1. Instalar dependencias
 poetry install --no-root --all-extras
 
-# 2. Aplicar migraciones ejecutando script sql en la base de datos (ruta: migrations/001_initial_schema.sql)
+# 2. Crear base de datos y usuario en postgres con permisos a DB
 
-# 3. Ejecutar la aplicación
+# 3. Aplicar migraciones ejecutando script sql en la base de datos (ruta: migrations/001_initial_schema.sql)
+
+# 4. Ejecutar la aplicación
 poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # 4. Acceder a la aplicación
@@ -52,15 +56,6 @@ poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ```
 
-## 📋 Tabla de Contenidos
-
-- [Características](#-características)
-- [Tecnologías](#-tecnologías)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Instalación](#-instalación)
-- [Comandos Make](#-comandos-make)
-- [API Endpoints](#-api-endpoints)
-- [Testing](#-testing)
 
 ## ✨ Características
 
@@ -121,61 +116,15 @@ tracker-backend/
 └── pyproject.toml               # Dependencias y configuración
 ```
 
-## 🔧 Instalación
-
-### Prerequisitos
-
-- Python 3.12+
-- Poetry (gestor de dependencias)
-- Docker y Docker Compose (opcional)
-- PostgreSQL 16 (si no usas Docker)
-
-### Instalación con Poetry
-
-```bash
-# Instalar Poetry si no lo tienes
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Instalar dependencias
-make dev-install
-
-# O manualmente
-poetry install
-```
-
-## 📝 Comandos Make
-
-### Desarrollo Local
-
-```bash
-make install         # Instalar dependencias de producción
-make dev-install     # Instalar dependencias de desarrollo
-make run             # Ejecutar la aplicación
-make db-up           # Levantar solo PostgreSQL
-make db-down         # Detener PostgreSQL
-```
-
-### Docker
-
-```bash
-make docker-build      # Construir imágenes
-make docker-up         # Levantar servicios
-make docker-down       # Detener servicios
-make docker-restart    # Reiniciar servicios
-make docker-logs       # Ver logs (todos)
-make docker-logs-app   # Ver logs (app)
-make docker-logs-db    # Ver logs (database)
-make docker-shell      # Shell del contenedor
-make docker-clean      # Limpiar todo
-```
 
 ### Testing
 
 ```bash
-make test              # Ejecutar tests
-make test-docker       # Tests en Docker
-make test-cov          # Tests con cobertura
-make test-watch        # Tests en modo watch
+make test              # Ejecutar tests en Docker
+make test-local        # Ejecutar tests localmente
+make test-cov          # Ejecutar tests con cobertura en Docker
+make test-cov-local    # Ejecutar tests con cobertura localmente
+make test-watch        # Ejecutar tests en modo watch (local)
 ```
 
 ### Calidad de Código
@@ -227,29 +176,49 @@ make help              # Ver todos los comandos
 
 El proyecto incluye tres tipos de tests:
 
-### Tests Unitarios
+### Ejecución con Docker (Recomendado)
 
 ```bash
+# Ejecutar todos los tests
+make test
+
+# Ejecutar tests con cobertura
+make test-cov
+
+# Ejecutar tests por tipo
+docker compose exec app poetry run pytest tests/unit/
+docker compose exec app poetry run pytest tests/integration/
+docker compose exec app poetry run pytest tests/e2e/
+```
+
+### Ejecución Local
+
+```bash
+# Ejecutar todos los tests
+make test-local
+
+# Ejecutar tests con cobertura
+make test-cov-local
+
+# Ejecutar tests por tipo
 poetry run pytest tests/unit/
-```
-
-### Tests de Integración
-
-```bash
 poetry run pytest tests/integration/
-```
-
-### Tests E2E
-
-```bash
 poetry run pytest tests/e2e/
+
+# Modo watch (desarrollo)
+make test-watch
 ```
 
 ### Cobertura
 
 ```bash
+# Con Docker
 make test-cov
-# Abre htmlcov/index.html en el navegador
+
+# Local
+make test-cov-local
+
+# Abre htmlcov/index.html en el navegador para ver el reporte detallado
 ```
 
 ## 🔐 Variables de Entorno

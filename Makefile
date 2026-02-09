@@ -37,10 +37,11 @@ help:
 	@echo "  make docker-clean    - Limpiar contenedores, imágenes y volúmenes"
 	@echo ""
 	@echo "$(YELLOW)🧪 Testing:$(NC)"
-	@echo "  make test            - Ejecutar tests localmente"
-	@echo "  make test-docker     - Ejecutar tests en Docker"
-	@echo "  make test-watch      - Ejecutar tests en modo watch"
-	@echo "  make test-cov        - Ejecutar tests con cobertura"
+	@echo "  make test            - Ejecutar tests en Docker"
+	@echo "  make test-local      - Ejecutar tests localmente"
+	@echo "  make test-watch      - Ejecutar tests en modo watch (local)"
+	@echo "  make test-cov        - Ejecutar tests con cobertura en Docker"
+	@echo "  make test-cov-local  - Ejecutar tests con cobertura localmente"
 	@echo ""
 	@echo "$(YELLOW)🔍 Calidad de código:$(NC)"
 	@echo "  make lint            - Ejecutar linter (ruff)"
@@ -197,20 +198,36 @@ docker-clean:
 # ============================================
 
 test:
-	@echo "$(GREEN)🧪 Ejecutando tests...$(NC)"
+	@echo "$(GREEN)🧪 Ejecutando tests en Docker...$(NC)"
+	@if ! $(DOCKER_COMPOSE) ps app | grep -q "Up"; then \
+		echo "$(YELLOW)⚠️  El contenedor app no está corriendo. Levantando servicios...$(NC)"; \
+		$(DOCKER_COMPOSE) up -d; \
+		sleep 5; \
+	fi
+	$(DOCKER_COMPOSE) exec app poetry run pytest
+
+test-local:
+	@echo "$(GREEN)🧪 Ejecutando tests localmente...$(NC)"
 	poetry run pytest
 
-test-docker:
-	@echo "$(GREEN)🧪 Ejecutando tests en Docker...$(NC)"
-	$(DOCKER_COMPOSE) exec app pytest
-
 test-watch:
-	@echo "$(GREEN)🧪 Ejecutando tests en modo watch...$(NC)"
+	@echo "$(GREEN)🧪 Ejecutando tests en modo watch (local)...$(NC)"
 	poetry run pytest-watch
 
 test-cov:
-	@echo "$(GREEN)🧪 Ejecutando tests con cobertura...$(NC)"
+	@echo "$(GREEN)🧪 Ejecutando tests con cobertura en Docker...$(NC)"
+	@if ! $(DOCKER_COMPOSE) ps app | grep -q "Up"; then \
+		echo "$(YELLOW)⚠️  El contenedor app no está corriendo. Levantando servicios...$(NC)"; \
+		$(DOCKER_COMPOSE) up -d; \
+		sleep 5; \
+	fi
+	$(DOCKER_COMPOSE) exec app poetry run pytest --cov=app --cov-report=html --cov-report=term
+	@echo "$(GREEN)📊 Reporte de cobertura generado en htmlcov/index.html$(NC)"
+
+test-cov-local:
+	@echo "$(GREEN)🧪 Ejecutando tests con cobertura localmente...$(NC)"
 	poetry run pytest --cov=app --cov-report=html --cov-report=term
+	@echo "$(GREEN)📊 Reporte de cobertura generado en htmlcov/index.html$(NC)"
 
 # ============================================
 # Calidad de código

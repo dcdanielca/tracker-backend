@@ -2,6 +2,18 @@
 
 Sistema de tracker de casos de soporte y requerimientos construido con FastAPI y PostgreSQL.
 
+## Pre-requisitos
+
+### Opción 1: Con Docker (Recomendado)
+- Docker 20+
+- Docker Compose 2+
+- Make (opcional, pero recomendado)
+
+### Opción 2: Sin Docker
+- Poetry 1.8.2
+- Python 3.12
+- Postgres 16.11 (Crear base de datos y usuario correspondiente con permisos)
+
 ## 🚀 Quick Start
 
 ### Opción 1: Docker (Recomendado)
@@ -27,13 +39,17 @@ make migrate
 
 ```bash
 # 1. Instalar dependencias
-make dev-install
+poetry install --no-root --all-extras
 
-# 2. Levantar solo la base de datos
-make db-up
+# 2. Aplicar migraciones ejecutando script sql en la base de datos (ruta: migrations/001_initial_schema.sql)
 
 # 3. Ejecutar la aplicación
-make run
+poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# 4. Acceder a la aplicación
+# API: http://localhost:8000
+# Docs: http://localhost:8000/docs
+
 ```
 
 ## 📋 Tabla de Contenidos
